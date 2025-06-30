@@ -1,12 +1,9 @@
 :- dynamic(mem/1).
 
-% doesn't find the quickest solution atm
-% fail-driven loop finds more but perhaps not all due to mem/1
 run :-
 	puzzle(orinda, GoalColor, Init),
 	solve(GoalColor, Init, Moves),
         draw(Init),
-	writeln("---------"),
 	draw_solution(Init, Moves).
 
 puzzle(orinda, black, [[green, black,  green],
@@ -15,17 +12,21 @@ puzzle(orinda, black, [[green, black,  green],
 
 solve(Goal, Init, Moves) :-
 	assertz(mem(Init)),
-	solve(Goal, Init, [], Rev),
+	solve_(Goal, [Init-[]], Rev),
 	reverse(Rev, Moves).
 
-solve(Goal, State, Ans, Ans) :-
+solve_(Goal, [State-Ans| _], Ans) :-
 	State = [[Goal, _, Goal], _, [Goal, _, Goal]].
 
-solve(Goal, State, Steps, Ans) :-
+solve_(Goal, [State-Moves|Fringe], Ans) :-
+	findall(NewState-[Move|Moves], new_step(Move, State, NewState), Steps),
+	append(Fringe, Steps, NewFringe),
+	solve_(Goal, NewFringe, Ans).
+
+new_step(Move, State, NewState) :-
 	step(Move, State, NewState),
 	not(mem(NewState)),
-	assertz(mem(NewState)),
-	solve(Goal, NewState, [Move|Steps], Ans).
+	assertz(mem(NewState)).
 
 % green (mid does nothing)
 step(topleft,     [[green, A2, A3], [B1, B2, B3], [C1, C2, C3]],
@@ -122,7 +123,7 @@ draw_line([X, Y, Z]) :-
 draw_solution(_, []).
 draw_solution(State, [Move|Rest]) :-
         step(Move, State, Step),
+	writeln("---------"),
 	writeln(Move),
         draw(Step),
-	writeln("---------"),
 	draw_solution(Step, Rest).
