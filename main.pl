@@ -5,7 +5,7 @@
 :- ['blueprints.pl'].
 
 run :-
-	puzzle(room46, Goal, Init),
+	puzzle(orinda_aries, Goal, Init),
 	%findall(NewState-Move, step(Move, Init, NewState), Steps),
 	%writeln(Steps).
 	solve(Goal, Init, Moves),
@@ -99,24 +99,44 @@ step(bottomright, [[A1, A2, A3], [B1, B2, B3], [C1, C2, yellow]],
                   [[A1, A2, A3], [B1, B2, yellow], [C1, C2, B3]]).
 
 % black
-step(topleft,     [[black, A2, A3], [B1, B2, B3], [C1, C2, C3]],
-                  [[A3, black, A2], [B1, B2, B3], [C1, C2, C3]]).
-step(topmid,      [[A1, black, A3], [B1, B2, B3], [C1, C2, C3]],
-                  [[A3, A1, black], [B1, B2, B3], [C1, C2, C3]]).
-step(topright,    [[A1, A2, black], [B1, B2, B3], [C1, C2, C3]],
-                  [[black, A1, A2], [B1, B2, B3], [C1, C2, C3]]).
-step(midleft,     [[A1, A2, A3], [black, B2, B3], [C1, C2, C3]],
-                  [[A1, A2, A3], [B3, black, B2], [C1, C2, C3]]).
-step(middle,      [[A1, A2, A3], [B1, black, B3], [C1, C2, C3]],
-                  [[A1, A2, A3], [B3, B1, black], [C1, C2, C3]]).
-step(midright,    [[A1, A2, A3], [B1, B2, black], [C1, C2, C3]],
-                  [[A1, A2, A3], [black, B1, B2], [C1, C2, C3]]).
-step(bottomleft,  [[A1, A2, A3], [B1, B2, B3], [black, C2, C3]],
-                  [[A1, A2, A3], [B1, B2, B3], [C3, black, C2]]).
-step(bottommid,   [[A1, A2, A3], [B1, B2, B3], [C1, black, C3]],
-                  [[A1, A2, A3], [B1, B2, B3], [C3, C1, black]]).
-step(bottomright, [[A1, A2, A3], [B1, B2, B3], [C1, C2, black]],
-                  [[A1, A2, A3], [B1, B2, B3], [black, C1, C2]]).
+rotate([A, B, C], [C, A, B]).
+
+step(topleft, [A, B, C], Out) :-
+	A = [black, _, _],
+	rotate(A, AR),
+	Out = [AR, B, C].
+step(topmid, [A, B, C], Out) :-
+	A = [_, black, _],
+	rotate(A, AR),
+	Out = [AR, B, C].
+step(topright, [A, B, C], Out) :-
+	A = [_, _, black],
+	rotate(A, AR),
+	Out = [AR, B, C].
+step(midleft, [A, B, C], Out) :-
+	B = [black, _, _],
+	rotate(B, BR),
+	Out = [A, BR, C].
+step(middle, [A, B, C], Out) :-
+	B = [_, black, _],
+	rotate(B, BR),
+	Out = [A, BR, C].
+step(midright, [A, B, C], Out) :-
+	B = [_, _, black],
+	rotate(B, BR),
+	Out = [A, BR, C].
+step(bottomleft, [A, B, C], Out) :-
+	C = [black, _, _],
+	rotate(C, CR),
+	Out = [A, B, CR].
+step(bottommid, [A, B, C], Out) :-
+	C = [_, black, _],
+	rotate(C, CR),
+	Out = [A, B, CR].
+step(bottomright, [A, B, C], Out) :-
+	C = [_, _, black],
+	rotate(C, CR),
+	Out = [A, B, CR].
 
 % violet (bottom does nothing)
 step(topleft,     [[violet, A2, A3], [B1, B2, B3], [C1, C2, C3]],
