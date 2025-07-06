@@ -5,13 +5,18 @@
 :- ['blueprints.pl'].
 
 run :-
-	puzzle(orinda_aries, Goal, Init),
+	puzzle(trading_post, Goal, Init),
 	%findall(NewState-Move, step(Move, Init, NewState), Steps),
 	%writeln(Steps).
 	solve(Goal, Init, Moves),
         draw(Init),
 	draw_solution(Init, Moves).
 
+puzzle(trading_post, yellow, [[pink, gray,  gray],
+                             [gray,  yellow, yellow],
+                             [gray,  yellow, yellow]]).
+
+% inner sanctum puzzles
 puzzle(orinda_aries, black, [[green, black,  green],
                              [black, black,  black],
                              [green, yellow, green]]).
